@@ -14,11 +14,15 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
 
+    public Text HighScoreText;
+
     public GameObject GameOverText;
 
     private bool m_Started = false;
 
     private int m_Points;
+
+    private string m_PlayerName = "";
 
     private bool m_GameOver = false;
 
@@ -27,7 +31,9 @@ public class MainManager : MonoBehaviour
     {
         if (DataManager.Instance != null)
         {
-            ScoreText.text = DataManager.Instance.PlayerName + " Score : 0";
+            m_PlayerName = DataManager.Instance.PlayerName;
+            ScoreText.text = $"{m_PlayerName} Score : 0";
+            HighScoreText.text = $"Best Score => {DataManager.Instance.PlayerWithHighScore} : {DataManager.Instance.HighScore}";
         }
 
         const float step = 0.6f;
@@ -75,19 +81,21 @@ public class MainManager : MonoBehaviour
 
     void AddPoint(int point)
     {
-        m_Points += point;
-        if (DataManager.Instance != null)
-        {
-            ScoreText.text = $"{DataManager.Instance.PlayerName} Score : {m_Points}";
-        }
-        else
-        {
-            ScoreText.text = $"Score : {m_Points}";
-        }
+        m_Points += point;        
+        ScoreText.text = $"{m_PlayerName} Score : {m_Points}";        
     }
 
     public void GameOver()
     {
+        if(DataManager.Instance != null) 
+        {            
+            if(m_Points > DataManager.Instance.HighScore) 
+            {
+                DataManager.Instance.HighScore = m_Points;
+                DataManager.Instance.PlayerWithHighScore = m_PlayerName;
+                DataManager.Instance.SaveData();
+            }
+        }
         m_GameOver = true;
         GameOverText.SetActive(true);
     }

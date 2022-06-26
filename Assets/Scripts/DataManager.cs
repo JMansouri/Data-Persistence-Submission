@@ -9,6 +9,10 @@ public class DataManager : MonoBehaviour
 
     public string PlayerName { get; set; }
 
+    public string PlayerWithHighScore { get; set; }
+
+    public int HighScore { get; set; } = 0;
+
     void Awake()
     {
         if (Instance != null)
@@ -19,19 +23,22 @@ public class DataManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad (gameObject);
+            LoadData();
         }
     }
 
     [System.Serializable]
     class DataToSave
     {
-        public string PlayerName;
+        public string HighScorePlayer;
+        public int HighScore;
     }
 
     public void SaveData()
     {
         DataToSave data = new DataToSave();
-        data.PlayerName = PlayerName;
+        data.HighScorePlayer = PlayerWithHighScore;
+        data.HighScore = HighScore;
 
         string json = JsonUtility.ToJson(data);
 
@@ -47,7 +54,8 @@ public class DataManager : MonoBehaviour
 
             DataToSave data = JsonUtility.FromJson<DataToSave>(json);
 
-            PlayerName = data.PlayerName;
+            PlayerWithHighScore = data.HighScorePlayer;
+            HighScore = data.HighScore;
         }
     }
 }
